@@ -17,15 +17,28 @@ export class GoogleDriveService {
     private appService: AppService,
     private endpointService: EndpointService) { }
 
-  allSheetData: SheetModel[] = [];
+  private allSheetData: SheetModel[] = [];
   public readonly SESSION_STORAGE_KEY: string = "accessToken";
 
+  private getAllSheetDataObj():SheetModel[]{
+    return this.allSheetData;
+  }
+
+  private isProfileSetupComplete(): boolean {
+    const sheetData = this.getAllSheetDataObj();
+    console.log(sheetData);
+
+    let isComplete:boolean = false;
+
+
+  }
 
   public getAllSheetData(sheetId: string) {
     const url = this.appService.getParsedGetDataUrl(sheetId);
     this.http.get(url).subscribe(
       res => {
-        // this.saveAllSheetData(res["valueRanges"]);
+        this.saveAllSheetData(res["valueRanges"]);
+        this.isProfileSetupComplete();
       },
       err => {
         console.error(err);

@@ -61,10 +61,11 @@ export class AppComponent implements OnInit {
     this.auth.signOut();
     this.router.navigate(['/login']);
   }
-  sheetId = "1W8n8TVSvlwvrssa7Ir8dyOd518DebuEi9Hvax65S9CE";
+  sheetId = "1rvG3W7RcQbYFauuFQESphRCY7zl3x-Wo3likKOXWhiQ";
   ngOnInit() {
     this.googleDriveService.getAllSheetData(this.sheetId);
     this.googleDriveService.getSheetTabData(this.sheetId, SheetTabsTitleConst.GOALS).subscribe();
+    
 
     // const postData = {
     //   "valueInputOption": "USER_ENTERED",
@@ -94,9 +95,13 @@ export class AppComponent implements OnInit {
     //       ]
     //     },
     //     {
-    //       "range": "Goals!A1:A4",
+    //       "range": "Goals!A1:A5",
     //       "majorDimension": "COLUMNS",
     //       "values": [
+              //  [
+              //     "Question", 
+              //   "Answer"
+              //  ],
     //         [
     //           "The reason I want to sign up for the program is",
     //           "In six months, I will be delighted if",
