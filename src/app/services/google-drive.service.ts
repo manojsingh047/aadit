@@ -20,17 +20,31 @@ export class GoogleDriveService {
   private allSheetData: SheetModel[] = [];
   public readonly SESSION_STORAGE_KEY: string = "accessToken";
 
-  private getAllSheetDataObj():SheetModel[]{
+  private getAllSheetDataObj(): SheetModel[] {
     return this.allSheetData;
   }
 
   private isProfileSetupComplete(): boolean {
+    const profileData = this.getLocalSheetTabData(SheetTabsTitleConst.SIGN_UP);
+
+    if (profileData["data"]["values"].length < 2) {
+      return false;
+    }
+    if (profileData["data"]["values"][0].length !== profileData["data"]["values"][1].length) {      //if enteries are not equal to title enteries
+      return false;
+    }
+
+    for (const value of profileData["data"]["values"][1]) {
+      if (value.length === 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private getLocalSheetTabData(tab: string) {
     const sheetData = this.getAllSheetDataObj();
-    console.log(sheetData);
-
-    let isComplete:boolean = false;
-
-
+    return sheetData.find(sheet => sheet.title === tab);
   }
 
   public getAllSheetData(sheetId: string) {
@@ -39,6 +53,7 @@ export class GoogleDriveService {
       res => {
         this.saveAllSheetData(res["valueRanges"]);
         this.isProfileSetupComplete();
+        console.log('isProfileSetupComplete', this.isProfileSetupComplete());
       },
       err => {
         console.error(err);
