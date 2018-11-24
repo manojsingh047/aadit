@@ -26,16 +26,34 @@ export class GoogleDriveService {
 
   private isProfileSetupComplete(): boolean {
     const profileData = this.getLocalSheetTabData(SheetTabsTitleConst.SIGN_UP);
+    const profileValue = profileData["data"]["values"];
+    const profileColumnLen = profileValue[0].length;
 
-    if (profileData["data"]["values"].length < 2) {
+    if (profileValue.length < 2) {
       return false;
     }
-    if (profileData["data"]["values"][0].length !== profileData["data"]["values"][1].length) {      //if enteries are not equal to title enteries
+    if (profileValue[1].length !== profileColumnLen) {      //if enteries are not equal to title enteries
       return false;
     }
 
-    for (const value of profileData["data"]["values"][1]) {
+    for (const value of profileValue[1]) {
       if (value.length === 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+  private isGoalSetupComplete(): boolean {
+    const goalsData = this.getLocalSheetTabData(SheetTabsTitleConst.GOALS);
+    const goalsValue = goalsData["data"]["values"];
+    const goalsColumnLen = goalsValue[0].length;
+
+    if (goalsValue.length < 2) {
+      return false;
+    }
+
+    for (let i = 1; i < goalsValue.length; i++) {
+      if (goalsValue[i].length !== goalsColumnLen || goalsValue[i][1].length === 0) {
         return false;
       }
     }
@@ -52,8 +70,8 @@ export class GoogleDriveService {
     this.http.get(url).subscribe(
       res => {
         this.saveAllSheetData(res["valueRanges"]);
-        this.isProfileSetupComplete();
-        console.log('isProfileSetupComplete', this.isProfileSetupComplete());
+        console.log('this.isProfileSetupComplete()', this.isProfileSetupComplete());
+        console.log('this.isGoalSetupComplete()', this.isGoalSetupComplete());
       },
       err => {
         console.error(err);
