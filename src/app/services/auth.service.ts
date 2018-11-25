@@ -120,7 +120,7 @@ export class AuthService {
     });
   }
 
-  public oauthSignIn(provider: AuthProvider) {
+  public oauthSignIn(provider: AuthProvider):any {
     if (!(<any>window).cordova) {
       return this.afAuth.auth.signInWithPopup(provider);
     } else {
@@ -129,7 +129,7 @@ export class AuthService {
           return this.afAuth.auth.getRedirectResult().then(result => {
             return this.signInHandler(result);
           }).catch(function (error) {
-            alert(error.message);
+            console.error(error.message);
           });
         });
     }
