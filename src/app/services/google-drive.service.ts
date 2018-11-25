@@ -26,12 +26,14 @@ export class GoogleDriveService {
 
   private isProfileSetupComplete(): boolean {
     const profileData = this.getLocalSheetTabData(SheetTabsTitleConst.SIGN_UP);
-    const profileValue = profileData["data"]["values"];
-    const profileColumnLen = profileValue[0].length;
+    const profileValue = profileData["data"]["values"] || [];
 
     if (profileValue.length < 2) {
       return false;
     }
+
+    const profileColumnLen = profileValue[0].length;
+
     if (profileValue[1].length !== profileColumnLen) {      //if enteries are not equal to title enteries
       return false;
     }
@@ -45,15 +47,34 @@ export class GoogleDriveService {
   }
   private isGoalSetupComplete(): boolean {
     const goalsData = this.getLocalSheetTabData(SheetTabsTitleConst.GOALS);
-    const goalsValue = goalsData["data"]["values"];
-    const goalsColumnLen = goalsValue[0].length;
+    const goalsValue = goalsData["data"]["values"] || [];
 
     if (goalsValue.length < 2) {
       return false;
     }
 
+    const goalsColumnLen = goalsValue[0].length;
+
     for (let i = 1; i < goalsValue.length; i++) {
       if (goalsValue[i].length !== goalsColumnLen || goalsValue[i][1].length === 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private isMedicalSetupComplete(): boolean {
+    const medicalData = this.getLocalSheetTabData(SheetTabsTitleConst.MEDICAL_HISTORY);
+    const medicalValue = medicalData["data"]["values"] || [];
+
+    if (medicalValue.length < 2) {
+      return false;
+    }
+
+    const medicalColumnLen = medicalValue[0].length;
+
+    for (let i = 1; i < medicalValue.length; i++) {
+      if (medicalValue[i].length !== medicalColumnLen || medicalValue[i][1].length === 0) {
         return false;
       }
     }
@@ -72,6 +93,7 @@ export class GoogleDriveService {
         this.saveAllSheetData(res["valueRanges"]);
         console.log('this.isProfileSetupComplete()', this.isProfileSetupComplete());
         console.log('this.isGoalSetupComplete()', this.isGoalSetupComplete());
+        console.log('this.isMedicalSetupComplete()', this.isMedicalSetupComplete());
       },
       err => {
         console.error(err);
