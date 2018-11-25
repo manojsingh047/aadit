@@ -27,15 +27,15 @@ export class SignupPage implements OnInit {
   form: FormGroup;
 
   signup() {
-		let data = this.form.value;
-		let credentials = {
-			email: data.email,
-			password: data.password
-		};
-		this.auth.signUp(credentials).then(
+    let data = this.form.value;
+    let credentials = {
+      email: data.email,
+      password: data.password
+    };
+    this.auth.signUp(credentials).then(
       () => this.router.navigate(['/home']),
       error => this.signupError = error.message
 
-		);
-}
+    );
+  }
 }
