@@ -22,7 +22,6 @@ export class HomePage {
     this.checkForInitialSetup();
   }
 
-  sheetId = "1vx40aLl8UTvWF-QY1cyh8BA_iXDF0qMw2sxkcg-QQdM";
 
   private async showMedicalModal() {
     const modal = await this.modalController.create({
@@ -33,10 +32,21 @@ export class HomePage {
   }
   checkForInitialSetup() {
 
-    this.googleDriveService.getAllSheetData(this.sheetId);
-    this.googleDriveService.getSheetTabData(this.sheetId, SheetTabsTitleConst.GOALS).subscribe();
+    this.googleDriveService.getAllSheetData(this.googleDriveService.getSheetId()).subscribe(
+      sheetData => {
+        this.googleDriveService.saveAllSheetData(sheetData["valueRanges"]);
+        console.log('this.isProfileSetupComplete()', this.googleDriveService.isProfileSetupComplete());
+        console.log('this.isGoalSetupComplete()', this.googleDriveService.isGoalSetupComplete());
+        console.log('this.isMedicalSetupComplete()', this.googleDriveService.isMedicalSetupComplete());
 
-    this.showMedicalModal();
+        this.showMedicalModal();
+
+      },
+      err => {
+        console.error(err);
+      }
+    );
+    this.googleDriveService.getSheetTabData(this.googleDriveService.getSheetId(), SheetTabsTitleConst.GOALS).subscribe();
 
 
     // const postData = {

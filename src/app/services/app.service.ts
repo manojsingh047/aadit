@@ -31,12 +31,10 @@ export class AppService {
     let parsedUrl = this.getUrlWithSheetId(sheetId);
 
     if (!sheetTitle) {
-      parsedUrl += `/values:batchUpdate?`;
+      parsedUrl += `/values:batchUpdate`;
     } else {
       parsedUrl += '/values/';
     }
-
-    parsedUrl = this.appendApiKey(parsedUrl);
 
     return parsedUrl;
   }

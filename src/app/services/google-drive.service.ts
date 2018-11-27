@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AppService } from './app.service';
 import { SheetTabsTitleConst } from '../constants/sheet.constant';
 import { SheetModel } from '../models/sheet.model';
-import { Observable } from 'rxjs';
+import { Observable, Subscriber, Subscription } from 'rxjs';
 import { NewSheetModel } from '../models/google-sheet-setup.model';
 import { EndpointService } from './endpoint.service';
 
@@ -20,11 +20,7 @@ export class GoogleDriveService {
   private allSheetData: SheetModel[] = [];
   public readonly SESSION_STORAGE_KEY: string = "accessToken";
 
-  private getAllSheetDataObj(): SheetModel[] {
-    return this.allSheetData;
-  }
-
-  private isProfileSetupComplete(): boolean {
+  public isProfileSetupComplete(): boolean {
     const profileData = this.getLocalSheetTabData(SheetTabsTitleConst.SIGN_UP);
     const profileValue = profileData["data"]["values"] || [];
 
@@ -45,7 +41,7 @@ export class GoogleDriveService {
     }
     return true;
   }
-  private isGoalSetupComplete(): boolean {
+  public isGoalSetupComplete(): boolean {
     const goalsData = this.getLocalSheetTabData(SheetTabsTitleConst.GOALS);
     const goalsValue = goalsData["data"]["values"] || [];
 
@@ -63,7 +59,7 @@ export class GoogleDriveService {
     return true;
   }
 
-  private isMedicalSetupComplete(): boolean {
+  public isMedicalSetupComplete(): boolean {
     const medicalData = this.getLocalSheetTabData(SheetTabsTitleConst.MEDICAL_HISTORY);
     const medicalValue = medicalData["data"]["values"] || [];
 
@@ -81,27 +77,22 @@ export class GoogleDriveService {
     return true;
   }
 
-  private getLocalSheetTabData(tab: string) {
+  public getAllSheetDataObj(): SheetModel[] {
+    return this.allSheetData;
+  }
+
+
+  public getLocalSheetTabData(tab: string) {
     const sheetData = this.getAllSheetDataObj();
     return sheetData.find(sheet => sheet.title === tab);
   }
 
-  public getAllSheetData(sheetId: string) {
+  public getAllSheetData(sheetId: string): Observable<any> {
     const url = this.appService.getParsedGetDataUrl(sheetId);
-    this.http.get(url).subscribe(
-      res => {
-        this.saveAllSheetData(res["valueRanges"]);
-        console.log('this.isProfileSetupComplete()', this.isProfileSetupComplete());
-        console.log('this.isGoalSetupComplete()', this.isGoalSetupComplete());
-        console.log('this.isMedicalSetupComplete()', this.isMedicalSetupComplete());
-      },
-      err => {
-        console.error(err);
-      }
-    );
+    return this.http.get(url);
   }
 
-  private saveAllSheetData(sheetApidata): void {
+  public saveAllSheetData(sheetApidata): void {
     Object.values(SheetTabsTitleConst).forEach((title, index) => {
       let sheetObj: SheetModel = {
         title: "",
@@ -122,19 +113,18 @@ export class GoogleDriveService {
 
   public setAllSheetData(sheetId: string, postData: any): Observable<any> {
     const url = this.appService.getParsedPostDataUrl(sheetId);
-    return this.http.post(url, postData)
-    // return this.http.post(url, postData, {
-    //   headers: new HttpHeaders({
-    //     Authorization: `Bearer ya29.Gl1YBoswVibRJqRZfHkWAcRZGbUn7EurbwCsg-tUd3zIpwUI3R78ErdxI0bab4fpZGeeB2Tsv5HIKsmP1-NFNChguAzQGlWDHqNnRAl-5npUtj1j9khEfdS_2PZYrtY`
-    //   })
-    // });
+    return this.http.post(url, postData, {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${this.getOauthToken()}`
+      })
+    });
   }
 
   public setSheetTabData(sheetId: string, postData: any, tab?: string): Observable<any> {
     const url = this.appService.getParsedPostDataUrl(sheetId);
     return this.http.post(url, postData, {
       headers: new HttpHeaders({
-        Authorization: `Bearer ya29.Gl1YBoswVibRJqRZfHkWAcRZGbUn7EurbwCsg-tUd3zIpwUI3R78ErdxI0bab4fpZGeeB2Tsv5HIKsmP1-NFNChguAzQGlWDHqNnRAl-5npUtj1j9khEfdS_2PZYrtY`
+        Authorization: `Bearer ${this.getOauthToken()}`
       })
     });
   }
@@ -240,6 +230,15 @@ export class GoogleDriveService {
     });
   }
 
+  private sheetId = "1vx40aLl8UTvWF-QY1cyh8BA_iXDF0qMw2sxkcg-QQdM";
+  private oauthToken = "ya29.GlthBq20kyYUBR1aBl9qGqM2hY6rkpmzaYq00DvVe_5GBtTFTSIjQ5vN5Sz5TteTd0baMwsQP_HKp0ioQWTh-VC-oDSWBhDEjrLrD74K8UvEFmjY20OfaPSNgnXr";
+  public getSheetId() {
+    return this.sheetId;
+  }
+
+  public getOauthToken() {
+    return this.oauthToken;
+  }
 
 
 }
