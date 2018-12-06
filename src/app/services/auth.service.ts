@@ -68,57 +68,13 @@ export class AuthService {
     console.log("this.signInHandler", data);
     sessionStorage.setItem(this.googleDriveService.SESSION_STORAGE_KEY, data.credential.accessToken);
     console.log('data.credential.access_token', data.credential.accessToken);
-    if (data.additionalUserInfo.isNewUser) {
+   /* if (data.additionalUserInfo.isNewUser) {
       return this.setUpNewUser(data);
-    }
+    }*/
     return true;
   }
 
-  public setUpNewUser(newUserData) {
-    // console.log('newUserData',newUserData);
-    // console.log('this.googleDriveService.getToken()',this.googleDriveService.getToken());
-
-    this.googleDriveService.createUser(newUserData.user.uid, this.googleDriveService.getToken()).subscribe((createUserResponse) => {
-
-      const userData = {
-        userId: newUserData.user.uid,
-        sheetId: createUserResponse.spreadsheetId
-      };
-      
-      this.afDb.list(`/profile/${newUserData.user.uid}`).push(userData).then((response) => {
-        console.log('list',response);
-
-        // this.navCtrl.push(Login, { message: 'User saved successfully. Please login now', status: 'Success' });
-      }, err => {
-        // this.navCtrl.push(Login, { message: 'Failed to save the user information. Please try again.', status: 'Error' });
-      });
-
-
-      // this.sheetService.saveUser(this.user, this.gSheetService.getToken(), createUserResponse.spreadsheetId).subscribe((saveUserResponse) => {
-
-      //   const nameData = new UserName(`${this.user["first_name"]} ${this.user["last_name"]}`, this.user["first_name"], this.user["last_name"], this.user["first_name"]);
-      //   const setupData = new UserSetup(false, false, false);
-
-      //   const userData = new UserProfile(createUserWithCredsResponse.user.uid, createUserResponse.spreadsheetId, nameData, this.user["email"], "", this.user["phone"], setupData);
-
-      //   // console.log("createUserResponse:::", createUserWithCredsResponse);
-      //   // console.log("saveUserResponse:::", saveUserResponse);
-      //   // console.log("data:::", createUserResponse);
-      //   // console.log("userData:::", userData);
-
-      //   this.afDb.list(`/profile/${createUserWithCredsResponse.user.uid}`).push(userData).then((response) => {
-      //     // loader.dismiss();
-      //     // this.navCtrl.push(Login, { message: 'User saved successfully. Please login now', status: 'Success' });
-      //   }, err => {
-      //     // this.navCtrl.push(Login, { message: 'Failed to save the user information. Please try again.', status: 'Error' });
-      //   });
-
-      // }, (err) => {
-      //   loader.dismiss();
-      //   this.navCtrl.push(Login, { message: 'Failed to save the user information. Please try again.', status: 'Error' });
-      // });
-    });
-  }
+ 
 
   public oauthSignIn(provider: AuthProvider):any {
     if (!(<any>window).cordova) {
