@@ -58,14 +58,14 @@ export class AuthService {
 
     return this.oauthSignIn(provider)
       .then(res => {
-        console.log("signInWithGoogle", res);
+        console.log('signInWithGoogle', res);
         this.signInHandler(res);
       });
   }
 
 
   public signInHandler(data) {
-    console.log("this.signInHandler", data);
+    console.log('this.signInHandler', data);
     sessionStorage.setItem(this.googleDriveService.SESSION_STORAGE_KEY, data.credential.accessToken);
     console.log('data.credential.access_token', data.credential.accessToken);
    /* if (data.additionalUserInfo.isNewUser) {

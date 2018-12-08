@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { SheetTabsTitleConst } from "./constants/sheet.constant";
+import { SheetTabsTitleConst } from './constants/sheet.constant';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { AuthService } from './services/auth.service';
 

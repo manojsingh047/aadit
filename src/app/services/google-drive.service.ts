@@ -6,7 +6,7 @@ import { SheetModel } from '../models/sheet.model';
 import { Observable, Subscriber, Subscription } from 'rxjs';
 import { NewSheetModel } from '../models/google-sheet-setup.model';
 import { EndpointService } from './endpoint.service';
-
+import { DbqueryService } from './dbquery.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -15,15 +15,16 @@ export class GoogleDriveService {
   constructor(
     private http: HttpClient,
     private appService: AppService,
-    private endpointService: EndpointService) { }
+    private endpointService: EndpointService,
+    private queryService:DbqueryService) { }
 
   private allSheetData: SheetModel[] = [];
-  public readonly SESSION_STORAGE_KEY: string = "accessToken";
+  public readonly SESSION_STORAGE_KEY: string = 'accessToken';
 
   public isProfileSetupComplete(): boolean {
     const profileData = this.getLocalSheetTabData(SheetTabsTitleConst.SIGN_UP);
-    const profileValue = profileData["data"]["values"] || [];
-
+    const profileValue = profileData['data']['values'] || [];
+    console.log('profileData======',profileData);
     if (profileValue.length < 2) {
       return false;
     }
@@ -43,7 +44,7 @@ export class GoogleDriveService {
   }
   public isGoalSetupComplete(): boolean {
     const goalsData = this.getLocalSheetTabData(SheetTabsTitleConst.GOALS);
-    const goalsValue = goalsData["data"]["values"] || [];
+    const goalsValue = goalsData['data']['values'] || [];
 
     if (goalsValue.length < 2) {
       return false;
@@ -61,7 +62,7 @@ export class GoogleDriveService {
 
   public isMedicalSetupComplete(): boolean {
     const medicalData = this.getLocalSheetTabData(SheetTabsTitleConst.MEDICAL_HISTORY);
-    const medicalValue = medicalData["data"]["values"] || [];
+    const medicalValue = medicalData['data']['values'] || [];
 
     if (medicalValue.length < 2) {
       return false;
@@ -95,7 +96,7 @@ export class GoogleDriveService {
   public saveAllSheetData(sheetApidata): void {
     Object.values(SheetTabsTitleConst).forEach((title, index) => {
       let sheetObj: SheetModel = {
-        title: "",
+        title: '',
         data: {}
       };
 
@@ -143,7 +144,7 @@ export class GoogleDriveService {
   public getToken(): string {
     let token: string = sessionStorage.getItem(this.SESSION_STORAGE_KEY);
     if (!token) {
-      throw new Error("no token set , authentication required");
+      throw new Error('no token set , authentication required');
     }
     return token;
   }
@@ -152,7 +153,7 @@ export class GoogleDriveService {
 
     const model = {
       properties: {
-        title: ""
+        title: ''
       },
       sheets: []
     };
@@ -171,20 +172,20 @@ export class GoogleDriveService {
 
   public saveUser(user, authToken: string, spreadsheetId: string): Observable<any> {
     const postData = {
-      "valueInputOption": "USER_ENTERED",
-      "data": [
+      'valueInputOption': 'USER_ENTERED',
+      'data': [
         {
-          "range": "Personal_Details!A1:G2",
-          "majorDimension": "ROWS",
-          "values": [
+          'range': 'Personal_Details!A1:G2',
+          'majorDimension': 'ROWS',
+          'values': [
             [
-              "first_name",
-              "last_name",
-              "email",
-              "company",
-              "mobile_number",
-              "gender",
-              "birth_year"
+              'first_name',
+              'last_name',
+              'email',
+              'company',
+              'mobile_number',
+              'gender',
+              'birth_year'
             ],
             [
               user.first_name,
@@ -198,25 +199,25 @@ export class GoogleDriveService {
           ]
         },
         {
-          "range": "Goals!A1:A4",
-          "majorDimension": "COLUMNS",
-          "values": [
+          'range': 'Goals!A1:A4',
+          'majorDimension': 'COLUMNS',
+          'values': [
             [
-              "The reason I want to sign up for the program is",
-              "In six months, I will be delighted if",
-              "My current frequency of physical activity is",
-              "Briefly describe what you currently do for physical activity"
+              'The reason I want to sign up for the program is',
+              'In six months, I will be delighted if',
+              'My current frequency of physical activity is',
+              'Briefly describe what you currently do for physical activity'
             ]
           ]
         },
         {
-          "range": "Medical_History!A1:A3",
-          "majorDimension": "COLUMNS",
-          "values": [
+          'range': 'Medical_History!A1:A3',
+          'majorDimension': 'COLUMNS',
+          'values': [
             [
-              "The last time I had a medical check up was",
-              "Checked_yes ?",
-              "Disclaimer Yes?"
+              'The last time I had a medical check up was',
+              'Checked_yes ?',
+              'Disclaimer Yes?'
             ]
           ]
         }
@@ -230,10 +231,11 @@ export class GoogleDriveService {
     });
   }
 
-  private sheetId = "1vx40aLl8UTvWF-QY1cyh8BA_iXDF0qMw2sxkcg-QQdM";
-  private oauthToken = "ya29.GlthBq20kyYUBR1aBl9qGqM2hY6rkpmzaYq00DvVe_5GBtTFTSIjQ5vN5Sz5TteTd0baMwsQP_HKp0ioQWTh-VC-oDSWBhDEjrLrD74K8UvEFmjY20OfaPSNgnXr";
+  //private sheetId = '1vx40aLl8UTvWF-QY1cyh8BA_iXDF0qMw2sxkcg-QQdM';
+  private oauthToken = 'ya29.GlthBq20kyYUBR1aBl9qGqM2hY6rkpmzaYq00DvVe_5GBtTFTSIjQ5vN5Sz5TteTd0baMwsQP_HKp0ioQWTh-VC-oDSWBhDEjrLrD74K8UvEFmjY20OfaPSNgnXr';
   public getSheetId() {
-    return this.sheetId;
+    return this.queryService.getSheetId();
+   // return this.sheetId;
   }
 
   public getOauthToken() {

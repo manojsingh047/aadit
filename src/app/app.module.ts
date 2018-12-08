@@ -16,9 +16,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { GoogleDriveService } from './services/google-drive.service';
 import { EndpointService } from './services/endpoint.service';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, UserProfileComponent],
   entryComponents: [],
   imports: [
     BrowserModule,

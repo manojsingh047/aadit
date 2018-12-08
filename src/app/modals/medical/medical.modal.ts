@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { DynamicFormModel } from 'src/app/models/dynamic-form.model';
 import { GoogleDriveService } from 'src/app/services/google-drive.service';
-import { SheetTabsTitleConst } from "../../constants/sheet.constant";
+import { SheetTabsTitleConst } from '../../constants/sheet.constant';
 import { DriveRequestModel } from 'src/app/models/drive-postdata.model';
 
 @Component({
@@ -20,17 +20,17 @@ export class MedicalModal implements OnInit {
 
   // private questions = [
   //   {
-  //     key: "q1",
-  //     label: "The last time I had a medical check up was",
-  //     value: "12/12/2018",
-  //     type: "text",
+  //     key: 'q1',
+  //     label: 'The last time I had a medical check up was',
+  //     value: '12/12/2018',
+  //     type: 'text',
   //     validation: { required: true }
   //   },
   //   {
-  //     key: "q2",
-  //     label: "Checked_yes ?",
-  //     value: "Yes",
-  //     type: "select",
+  //     key: 'q2',
+  //     label: 'Checked_yes ?',
+  //     value: 'Yes',
+  //     type: 'select',
   //     options: ['Yes', 'No'],
   //     validation: { required: true }
   //   }
@@ -98,11 +98,11 @@ export class MedicalModal implements OnInit {
     });
 
     const postData: DriveRequestModel = {
-      "valueInputOption": "USER_ENTERED",
-      "data": [{
-        "range": `${SheetTabsTitleConst.MEDICAL_HISTORY}!C2:C4`,
-        "majorDimension": "COLUMNS",
-        "values": [values]
+      'valueInputOption': 'USER_ENTERED',
+      'data': [{
+        'range': `${SheetTabsTitleConst.MEDICAL_HISTORY}!C2:C4`,
+        'majorDimension': 'COLUMNS',
+        'values': [values]
       }]
     };
 
