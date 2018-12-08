@@ -12,7 +12,7 @@
 <ion-content padding>
     <h3>medical</h3>
 
-    <form (ngSubmit)="onSubmit()" [formGroup]="form" >
+    <form (ngSubmit)="onSubmit()" [formGroup]="form" *ngIf="isViewReady" >
 
         <div *ngFor="let question of questions" class="form-row">
 

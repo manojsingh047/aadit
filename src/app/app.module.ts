@@ -13,13 +13,14 @@ import { firebaseConfig } from '../config';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { GoogleDriveService } from './services/google-drive.service';
 import { EndpointService } from './services/endpoint.service';
-import { UserProfileComponent } from './user-profile/user-profile.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+// import { UserProfileComponent } from './user-profile/user-profile.component';
 
 @NgModule({
-  declarations: [AppComponent, UserProfileComponent],
+  declarations: [AppComponent],
   entryComponents: [],
   imports: [
     BrowserModule,
@@ -37,8 +38,13 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     EndpointService,
     GoogleDriveService,
-    AngularFireAuth
+    AngularFireAuth,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

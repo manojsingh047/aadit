@@ -6,6 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SheetTabsTitleConst } from './constants/sheet.constant';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import { AppService } from './services/app.service';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +31,8 @@ export class AppComponent implements OnInit {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private router: Router,
-    private auth: AuthService
+    private auth: AuthService,
+    private appService: AppService
   ) {
     this.initializeApp();
   }
@@ -38,12 +40,13 @@ export class AppComponent implements OnInit {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
     });
-  
+
+    console.log('userInfo', this.appService.getUserInfo());
+
     this.auth.afAuth.authState
       .subscribe(
         user => {
-          console.log('user',user);
-          if (user) {
+          if (this.appService.getUserInfo()) {
             this.router.navigate(['/home']);
           } else {
             this.router.navigate(['/login']);
@@ -54,7 +57,8 @@ export class AppComponent implements OnInit {
         }
       );
   }
-    
+
+
   logout() {
     this.auth.signOut();
     this.router.navigate(['/login']);

@@ -7,6 +7,8 @@ import { Observable, Subscriber, Subscription } from 'rxjs';
 import { NewSheetModel } from '../models/google-sheet-setup.model';
 import { EndpointService } from './endpoint.service';
 import { DbqueryService } from './dbquery.service';
+import { UserProfileModel, UserInfoModel } from '../models/user-info.model';
+import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +18,9 @@ export class GoogleDriveService {
     private http: HttpClient,
     private appService: AppService,
     private endpointService: EndpointService,
-    private queryService:DbqueryService) { }
+    private router: Router,
+
+    private queryService: DbqueryService) { }
 
   private allSheetData: SheetModel[] = [];
   public readonly SESSION_STORAGE_KEY: string = 'accessToken';
@@ -24,7 +28,7 @@ export class GoogleDriveService {
   public isProfileSetupComplete(): boolean {
     const profileData = this.getLocalSheetTabData(SheetTabsTitleConst.SIGN_UP);
     const profileValue = profileData['data']['values'] || [];
-    console.log('profileData======',profileData);
+    console.log('profileData======', profileData);
     if (profileValue.length < 2) {
       return false;
     }
@@ -114,41 +118,21 @@ export class GoogleDriveService {
 
   public setAllSheetData(sheetId: string, postData: any): Observable<any> {
     const url = this.appService.getParsedPostDataUrl(sheetId);
-    return this.http.post(url, postData, {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${this.getOauthToken()}`
-      })
-    });
+    return this.http.post(url, postData);
   }
 
   public setSheetTabData(sheetId: string, postData: any, tab?: string): Observable<any> {
     const url = this.appService.getParsedPostDataUrl(sheetId);
-    return this.http.post(url, postData, {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${this.getOauthToken()}`
-      })
-    });
+    return this.http.post(url, postData);
   }
 
   public createUser(user_id, authToken: string): Observable<any> {
     let postData: NewSheetModel = this.getNewSheetModel();
     postData.properties.title = user_id;
 
-    return this.http.post(this.endpointService.googleApi, postData, {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${authToken}`
-      })
-    });
+    return this.http.post(this.endpointService.googleApi, postData);
 
   }
-  public getToken(): string {
-    let token: string = sessionStorage.getItem(this.SESSION_STORAGE_KEY);
-    if (!token) {
-      throw new Error('no token set , authentication required');
-    }
-    return token;
-  }
-
   public getNewSheetModel(): NewSheetModel {
 
     const model = {
@@ -224,23 +208,25 @@ export class GoogleDriveService {
       ]
     };
 
-    return this.http.post('https://sheets.googleapis.com/v4/spreadsheets/' + spreadsheetId + '/values:batchUpdate', postData, {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${authToken}`
-      })
-    });
+    return this.http.post('https://sheets.googleapis.com/v4/spreadsheets/' + spreadsheetId + '/values:batchUpdate', postData);
   }
 
-  //private sheetId = '1vx40aLl8UTvWF-QY1cyh8BA_iXDF0qMw2sxkcg-QQdM';
-  private oauthToken = 'ya29.GlthBq20kyYUBR1aBl9qGqM2hY6rkpmzaYq00DvVe_5GBtTFTSIjQ5vN5Sz5TteTd0baMwsQP_HKp0ioQWTh-VC-oDSWBhDEjrLrD74K8UvEFmjY20OfaPSNgnXr';
-  public getSheetId() {
-    return this.queryService.getSheetId();
-   // return this.sheetId;
+  public getSheetId(): string {
+    const userInfo = this.appService.getUserInfo();
+    if (!userInfo) {
+      this.router.navigate(['/login']);
+      return '';
+    }
+    return this.appService.getUserInfo().token.sheetId;
   }
 
-  public getOauthToken() {
-    return this.oauthToken;
+  public getOauthToken(): string {
+    const userInfo = this.appService.getUserInfo();
+    if (!userInfo) {
+      this.router.navigate(['/login']);
+      return '';
+    }
+    return userInfo.token.oAuthToken;
   }
-
 
 }

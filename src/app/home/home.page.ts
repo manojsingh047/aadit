@@ -46,7 +46,6 @@ export class HomePage {
         console.error(err);
       }
     );
-    this.googleDriveService.getSheetTabData(this.googleDriveService.getSheetId(), SheetTabsTitleConst.GOALS).subscribe();
 
 
     // const postData = {

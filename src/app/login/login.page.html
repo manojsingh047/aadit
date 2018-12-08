@@ -5,8 +5,8 @@
 </ion-header>
 
 <ion-content>
-  <form (ngSubmit)="login()" [formGroup]="loginForm">
-    <ion-list inset>
+  <!-- <form (ngSubmit)="login()" [formGroup]="loginForm"> -->
+    <!-- <ion-list inset>
 
       <ion-item [ngClass]="{ invalid: false }">
         <ion-input type="text" placeholder="Email" formControlName="email"></ion-input>
@@ -17,31 +17,45 @@
         <ion-input type="password" placeholder="Password" formControlName="password"></ion-input>
       </ion-item>
 
-    </ion-list>
+    </ion-list> -->
 
     <div padding-horizontal>
       <div class="form-error">{{loginError}}</div>
 
-      <button ion-button full type="submit" [disabled]="!loginForm.valid">Log in</button>
-      <div class="login-footer">
+      <!-- <button ion-button full type="submit" [disabled]="!loginForm.valid">Log in</button> -->
+      <!-- <div class="login-footer">
         <p>
           <a href="#">Forgot password?</a>
           If you're a new user, please sign up.
         </p>
-      </div>
+      </div> -->
 
-      <ion-list>
+      <!-- <ion-list>
 
         <button ion-button icon-left block clear (click)="loginWithGoogle()">
           <ion-icon name="logo-google"></ion-icon>
           Log in with Google
-        </button>
+        </button> -->
 
-        <button ion-button icon-left block clear (click)="signup()">
+        <!-- <button ion-button icon-left block clear (click)="signup()">
           <ion-icon name="person-add"></ion-icon>
           Sign up
-        </button>
-      </ion-list>
+        </button> -->
+      <!-- </ion-list> -->
     </div>
-  </form>
+  <!-- </form> -->
+
+  <ion-list>
+
+    <button ion-button icon-left block clear (click)="loginWithGoogle()">
+      <ion-icon name="logo-google"></ion-icon>
+      Log in with Google
+    </button>
+
+    <!-- <button ion-button icon-left block clear (click)="signup()">
+      <ion-icon name="person-add"></ion-icon>
+      Sign up
+    </button> -->
+  </ion-list>
+
 </ion-content>

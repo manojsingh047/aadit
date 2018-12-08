@@ -6,6 +6,9 @@ import * as firebase from 'firebase/app';
 
 import AuthProvider = firebase.auth.AuthProvider;
 import { GoogleDriveService } from './google-drive.service';
+import { UserProfileModel, UserInfoModel, TokenModel } from '../models/user-info.model';
+import { Router } from '@angular/router';
+import { DbqueryService } from './dbquery.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +18,9 @@ export class AuthService {
   constructor(
     public afAuth: AngularFireAuth,
     private afDb: AngularFireDatabase,
-    private googleDriveService: GoogleDriveService
+    private googleDriveService: GoogleDriveService,
+    private router: Router,
+    private dbService: DbqueryService
   ) {
     afAuth.authState.subscribe(user => {
       this.user = user;
@@ -30,6 +35,7 @@ export class AuthService {
     return this.user && this.user.email;
   }
   signOut(): Promise<void> {
+    localStorage.clear();
     return this.afAuth.auth.signOut();
   }
   signInWithEmail(credentials) {
@@ -51,8 +57,6 @@ export class AuthService {
   }
   signInWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope('profile');
-    provider.addScope('email');
     provider.addScope('https://www.googleapis.com/auth/spreadsheets');
     provider.addScope('https://www.googleapis.com/auth/drive');
 
@@ -64,19 +68,28 @@ export class AuthService {
   }
 
 
-  public signInHandler(data) {
+  public signInHandler(data): void {
     console.log('this.signInHandler', data);
-    sessionStorage.setItem(this.googleDriveService.SESSION_STORAGE_KEY, data.credential.accessToken);
-    console.log('data.credential.access_token', data.credential.accessToken);
-   /* if (data.additionalUserInfo.isNewUser) {
-      return this.setUpNewUser(data);
-    }*/
-    return true;
+
+    this.afDb.database.ref('profile').orderByChild('userId').equalTo(data['additionalUserInfo']['profile']['email']).on('child_added', (snapshot) => {
+      const sheetId: string = snapshot.child('sheetId')['node_']['value_'];
+
+      const userInfo = new UserInfoModel(new TokenModel(data['credential']['accessToken'], data['user']['refreshToken'], sheetId), new UserProfileModel(data['additionalUserInfo']['profile']['email'], data['additionalUserInfo']['profile']['family_name'], data['additionalUserInfo']['profile']['given_name'], data['additionalUserInfo']['profile']['name'], data['additionalUserInfo']['profile']['picture']));
+
+      console.log('userInfo', userInfo);
+
+      localStorage.setItem('userInfo', JSON.stringify(userInfo));
+      if (data.additionalUserInfo.isNewUser) {
+        // return this.setUpNewUser(data);
+      }
+      this.router.navigate(['/home']);
+    });
+
   }
 
- 
 
-  public oauthSignIn(provider: AuthProvider):any {
+
+  public oauthSignIn(provider: AuthProvider): any {
     if (!(<any>window).cordova) {
       return this.afAuth.auth.signInWithPopup(provider);
     } else {

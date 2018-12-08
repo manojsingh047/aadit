@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EndpointService } from './endpoint.service';
 import { SheetTabsTitleConst } from '../constants/sheet.constant';
+import { UserInfoModel } from '../models/user-info.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -18,10 +19,10 @@ export class AppService {
         parsedUrl += `ranges=${title}&`;
       });
     } else {
-      parsedUrl += `/values/${sheetTitle}?`;
+      parsedUrl += `/values/${sheetTitle}`;
     }
 
-    parsedUrl = this.appendApiKey(parsedUrl);
+    // parsedUrl = this.appendApiKey(parsedUrl);
 
     return parsedUrl;
   }
@@ -45,6 +46,10 @@ export class AppService {
 
   public appendApiKey(url: string) {
     return `${url}key=${this.enpointService.apiKey}`;
+  }
+
+  public getUserInfo(): UserInfoModel {
+    return JSON.parse(localStorage.getItem('userInfo'));
   }
 
 }

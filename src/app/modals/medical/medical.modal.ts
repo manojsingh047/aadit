@@ -18,38 +18,22 @@ export class MedicalModal implements OnInit {
     private googleDriveService: GoogleDriveService
   ) { }
 
-  // private questions = [
-  //   {
-  //     key: 'q1',
-  //     label: 'The last time I had a medical check up was',
-  //     value: '12/12/2018',
-  //     type: 'text',
-  //     validation: { required: true }
-  //   },
-  //   {
-  //     key: 'q2',
-  //     label: 'Checked_yes ?',
-  //     value: 'Yes',
-  //     type: 'select',
-  //     options: ['Yes', 'No'],
-  //     validation: { required: true }
-  //   }
-  // ];
-
   private questions: DynamicFormModel[];
   private form: FormGroup;
 
 
   ngOnInit() {
+    this.populateForm();
+  }
 
-    console.log(this.googleDriveService.getLocalSheetTabData(SheetTabsTitleConst.MEDICAL_HISTORY));
-
-    const questionsData = this.googleDriveService.getLocalSheetTabData(SheetTabsTitleConst.MEDICAL_HISTORY).data.values;
-
-    this.questions = this.getQuestions(questionsData);
-
-    this.form = this.createGroup();
-
+  isViewReady: boolean = false;
+  populateForm() {
+    this.googleDriveService.getSheetTabData(this.googleDriveService.getSheetId(), SheetTabsTitleConst.MEDICAL_HISTORY).subscribe(
+      (medicalData) => {
+        this.questions = this.getQuestions(medicalData.values);
+        this.form = this.createGroup();
+        this.isViewReady = true;
+      });
   }
 
   private getQuestions(questionsData): DynamicFormModel[] {
@@ -85,7 +69,11 @@ export class MedicalModal implements OnInit {
   onSubmit() {
     const postData: DriveRequestModel = this.getParsedPostData(this.form.value);
 
-    this.googleDriveService.setAllSheetData(this.googleDriveService.getSheetId(), postData).subscribe();
+    this.googleDriveService.setAllSheetData(this.googleDriveService.getSheetId(), postData).subscribe(
+      () => {
+        this.modalCtrl.dismiss();
+      });
+
   }
 
   private getParsedPostData(formData): DriveRequestModel {
